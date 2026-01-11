@@ -1,0 +1,3 @@
+gpiozero>=2.0
+google-generativeai  # For Gemini API
+RPi.GPIO  # Backup
