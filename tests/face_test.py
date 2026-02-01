@@ -18,4 +18,3 @@ while True:
         lcd.cursor_pos = (1, 0)
         lcd.write_string(mood)
         time.sleep(3)
-
