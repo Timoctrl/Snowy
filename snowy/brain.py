@@ -15,7 +15,8 @@ automatically - we don't have to do it ourselves!
 """
 
 import os
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
 
 # ---------------------------------------------------------------
@@ -59,22 +60,24 @@ class SnowyBrain:
     """
 
     def __init__(self):
-        # Configure Gemini with the API key from the environment
+        # Connect to Gemini with the API key from the environment
         # (we load it from .env in main.py)
         api_key = os.environ.get("GEMINI_API_KEY")
-        genai.configure(api_key=api_key)
+        self.client = genai.Client(api_key=api_key)
 
-        # Create the Gemini model with Snowy's personality baked in
+        # Which model to use, and Snowy's personality config.
         # gemini-2.0-flash-lite: stable release, ~1500 requests/day free!
-        # (2.5-flash-lite is still a preview model - it's capped at 20/day)
-        self.model = genai.GenerativeModel(
-            model_name="gemini-2.0-flash-lite",
+        self._model = "gemini-2.0-flash-lite"
+        self._config = types.GenerateContentConfig(
             system_instruction=SNOWY_PERSONALITY,
         )
 
         # Start a chat session - Gemini remembers the conversation for us!
         # No need to manually track messages like some other APIs.
-        self.chat = self.model.start_chat(history=[])
+        self.chat = self.client.chats.create(
+            model=self._model,
+            config=self._config,
+        )
 
         print("Snowy's brain is online! *purr*")
 
@@ -94,5 +97,8 @@ class SnowyBrain:
     def forget(self):
         """Snowy forgets everything - fresh conversation!"""
         # Start a brand new chat session with empty history
-        self.chat = self.model.start_chat(history=[])
+        self.chat = self.client.chats.create(
+            model=self._model,
+            config=self._config,
+        )
         print("Snowy's memory cleared. Fresh start!")

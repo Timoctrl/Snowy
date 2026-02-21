@@ -13,31 +13,8 @@ SETUP NEEDED (run on Pi once):
     sudo pip3 install SpeechRecognition --break-system-packages
 """
 
-import ctypes
+import os
 import speech_recognition as sr
-
-
-# ---------------------------------------------------------------
-# Silence the noisy ALSA warnings that PyAudio prints to the
-# terminal at startup (things like "cannot find card 'Headset'").
-# These are totally harmless - ALSA is just moaning about audio
-# devices that don't exist on the Pi. This makes the output clean!
-# ---------------------------------------------------------------
-def _silence_alsa_warnings():
-    try:
-        asound = ctypes.cdll.LoadLibrary("libasound.so.2")
-        handler = ctypes.CFUNCTYPE(
-            None,
-            ctypes.c_char_p, ctypes.c_int,
-            ctypes.c_char_p, ctypes.c_int,
-            ctypes.c_char_p,
-        )
-        asound.snd_lib_error_set_handler(handler(lambda *_: None))
-    except Exception:
-        pass  # If it fails, no big deal - you'll just see the ALSA noise
-
-
-_silence_alsa_warnings()
 
 
 class SnowyEars:
@@ -57,9 +34,19 @@ class SnowyEars:
         # The Recognizer does the speech-to-text conversion
         self.recognizer = sr.Recognizer()
 
-        # Microphone() automatically picks the default mic
-        # If your USB mic isn't picked up, see the note at the bottom
-        self.mic = sr.Microphone()
+        # Microphone() automatically picks the default mic.
+        # We briefly silence stderr while it loads PyAudio, because ALSA
+        # prints a bunch of harmless warnings about missing audio devices.
+        # We do this by redirecting stderr at the OS level (safe on ARM).
+        devnull = os.open(os.devnull, os.O_WRONLY)
+        old_stderr = os.dup(2)
+        os.dup2(devnull, 2)
+        os.close(devnull)
+        try:
+            self.mic = sr.Microphone()
+        finally:
+            os.dup2(old_stderr, 2)  # Always restore stderr!
+            os.close(old_stderr)
 
         # Wait this many seconds of silence before deciding you've finished
         # speaking. Default is 0.8s which cuts off too early mid-sentence.
