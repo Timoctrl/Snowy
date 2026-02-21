@@ -65,9 +65,10 @@ class SnowyBrain:
         genai.configure(api_key=api_key)
 
         # Create the Gemini model with Snowy's personality baked in
-        # gemini-2.5-flash-lite: free tier, 1000 requests/day - perfect!
+        # gemini-2.0-flash-lite: stable release, ~1500 requests/day free!
+        # (2.5-flash-lite is still a preview model - it's capped at 20/day)
         self.model = genai.GenerativeModel(
-            model_name="gemini-2.5-flash-lite",
+            model_name="gemini-2.0-flash-lite",
             system_instruction=SNOWY_PERSONALITY,
         )
 
