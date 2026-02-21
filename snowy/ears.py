@@ -13,8 +13,28 @@ SETUP NEEDED (run on Pi once):
     sudo pip3 install SpeechRecognition --break-system-packages
 """
 
+import contextlib
 import os
 import speech_recognition as sr
+
+
+@contextlib.contextmanager
+def _quiet():
+    """
+    Context manager that silences stderr for its duration.
+    PyAudio/ALSA floods the terminal with harmless warnings every time
+    it opens an audio device (missing surround, HDMI, JACK, etc.).
+    This redirects stderr to /dev/null at the OS level - safe on ARM.
+    """
+    devnull = os.open(os.devnull, os.O_WRONLY)
+    old_stderr = os.dup(2)
+    os.dup2(devnull, 2)
+    os.close(devnull)
+    try:
+        yield
+    finally:
+        os.dup2(old_stderr, 2)
+        os.close(old_stderr)
 
 
 class SnowyEars:
@@ -35,18 +55,9 @@ class SnowyEars:
         self.recognizer = sr.Recognizer()
 
         # Microphone() automatically picks the default mic.
-        # We briefly silence stderr while it loads PyAudio, because ALSA
-        # prints a bunch of harmless warnings about missing audio devices.
-        # We do this by redirecting stderr at the OS level (safe on ARM).
-        devnull = os.open(os.devnull, os.O_WRONLY)
-        old_stderr = os.dup(2)
-        os.dup2(devnull, 2)
-        os.close(devnull)
-        try:
+        # Silence ALSA noise while PyAudio probes audio devices.
+        with _quiet():
             self.mic = sr.Microphone()
-        finally:
-            os.dup2(old_stderr, 2)  # Always restore stderr!
-            os.close(old_stderr)
 
         # Wait this many seconds of silence before deciding you've finished
         # speaking. Default is 0.8s which cuts off too early mid-sentence.
@@ -69,7 +80,9 @@ class SnowyEars:
         returns: what you said as a string, or "" if nothing was understood
         """
         try:
-            with self.mic as source:
+            # PyAudio re-probes ALSA devices every time it opens a stream,
+            # so silence stderr here too (same harmless noise as at startup).
+            with _quiet(), self.mic as source:
                 # Wait for speech, then record until silence
                 audio = self.recognizer.listen(
                     source,
