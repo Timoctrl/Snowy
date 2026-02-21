@@ -1,0 +1,12 @@
+# IMPORTANT: .env contains your secret API key - never commit it!
+.env
+
+# Python junk
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+
+# Mac junk
+.DS_Store

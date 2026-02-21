@@ -1,76 +1,79 @@
-# Snowy 🐆❄️
+# Snowy the Snow Leopard
 
-AI-powered Lego Snow Leopard that uses Google Gemini for high-level decision making and Python-controlled hardware for movement and sensing.
+An AI-powered Lego snow leopard built with a Raspberry Pi 3B and Claude AI.
+Built by a dad and daughter as a hands-on electronics + coding project!
 
-## Features ✅
+## What Snowy can do
 
-- Autonomous exploration behaviors
-- Voice interaction and natural-language control via Google Gemini
-- Sensor-based navigation (ultrasonic, IR, bump sensors)
-- Camera-based perception (optional object detection)
-- Simple API for custom behaviors and remote control
+- Press her ear (button) → ask her a question → she answers on her LCD face!
+- Her LED eyes change colour based on her mood
+- She remembers the conversation so she can refer back to earlier things
+- Powered by **Google Gemini** AI (free tier!)
 
-## Hardware 🔧
+## Hardware
 
-- **Brain:** Raspberry Pi 3B
-- **Peripherals:** Freenove Ultimate Starter Kit (motors, sensors, LEDs)
-- **Optional:** Raspberry Pi Camera, motor driver HAT, battery pack
+| Part | Where |
+|------|-------|
+| Raspberry Pi 3B | Outside the Lego head |
+| 1602A LCD (I2C) | Snowy's face |
+| Red LED (GPIO 17) | Eye |
+| Blue LED (GPIO 27) | Eye |
+| Green LED (GPIO 22) | Eye |
+| Push button (GPIO 18) | Ear |
 
-## Software 🧠
+## File layout
 
-- **Language:** Python 3.10+
-- **Key libraries:** `gpiozero`, `RPi.GPIO`, `opencv-python`, `requests`, `asyncio`
-- **Integration:** Google Gemini API (requires API key)
+```
+main.py              ← Run this to start Snowy!
+snowy/
+  brain.py           ← Claude AI (Snowy's personality + memory)
+  hardware.py        ← LCD, LEDs, button control
+tests/
+  blink.py           ← Test a single LED
+  face_test.py       ← Test the LCD screen
+```
 
-> Note: Keep your Gemini API key secure. Set it via an environment variable (see Quick start).
+## Setting up on the Pi (one-time)
 
-## Quick start 🚀
+**1. Install libraries**
 
-1. Clone the repo:
+```bash
+sudo pip3 install google-generativeai python-dotenv RPLCD gpiozero --break-system-packages
+```
 
-   ```bash
-   git clone <repo-url>
-   cd Snowy
-   ```
+**2. Get a free Gemini API key**
 
-2. Create a virtual environment and install dependencies:
+Go to **aistudio.google.com/apikey**, sign in with Google, and click **Create API key**.
 
-   ```bash
-   python -m venv .venv
-   source .venv/bin/activate
-   pip install -r requirements.txt
-   ```
+**3. Save your API key in a .env file**
 
-3. Set your Gemini API key:
+```bash
+cd ~/Snowy
+nano .env
+```
 
-   ```bash
-   export GEMINI_API_KEY="your_api_key_here"
-   ```
+Type this (use your real key):
+```
+GEMINI_API_KEY=AIzaxxxxxxxxxx
+```
+Save with `Ctrl+O`, `Enter`, `Ctrl+X`.
 
-4. Run the main controller:
+> **Important:** The .env file is listed in .gitignore so it will never be
+> accidentally uploaded to GitHub. Keep your key safe!
 
-   ```bash
-   python src/main.py
-   ```
+## Running Snowy
 
-## Development 🛠️
+```bash
+cd ~/Snowy
+git pull origin main     # get the latest code
+python3 main.py
+```
 
-- Project layout: `src/` (code), `tests/` (unit tests), `docs/` (optional docs)
-- Run tests: `pytest`
-- Follow conventional commits for pull requests
+Then press Snowy's ear and type a question!
 
-## Contributing 🤝
+## Coming next
 
-Contributions are welcome! Open issues for bugs or feature requests and submit pull requests for changes. Please add tests and update docs for new features.
-
-## License 📄
-
-This project is available under the **MIT License**. See `LICENSE` for details.
-
-## Contact
-
-For questions or help, open an issue or contact the project maintainer.
-
----
-
-*Initial commit: README*
+- [ ] USB microphone → speak questions instead of typing
+- [ ] Speaker + amp board → Snowy speaks her answers aloud
+- [ ] Servo motor → tail wagging!
+- [ ] Ultrasonic sensor → Snowy notices when you walk nearby

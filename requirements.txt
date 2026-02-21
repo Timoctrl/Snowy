@@ -1,3 +1,5 @@
-gpiozero>=2.0
-google-generativeai  # For Gemini API
-RPi.GPIO  # Backup
+gpiozero>=2.0       # Controls GPIO pins (LEDs, button)
+RPLCD               # Controls the LCD screen
+google-generativeai # Gemini AI - Snowy's brain!
+python-dotenv       # Loads the API key from .env file
+RPi.GPIO            # Low-level GPIO backup (gpiozero uses this)
