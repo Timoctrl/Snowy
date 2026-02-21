@@ -13,7 +13,31 @@ SETUP NEEDED (run on Pi once):
     sudo pip3 install SpeechRecognition --break-system-packages
 """
 
+import ctypes
 import speech_recognition as sr
+
+
+# ---------------------------------------------------------------
+# Silence the noisy ALSA warnings that PyAudio prints to the
+# terminal at startup (things like "cannot find card 'Headset'").
+# These are totally harmless - ALSA is just moaning about audio
+# devices that don't exist on the Pi. This makes the output clean!
+# ---------------------------------------------------------------
+def _silence_alsa_warnings():
+    try:
+        asound = ctypes.cdll.LoadLibrary("libasound.so.2")
+        handler = ctypes.CFUNCTYPE(
+            None,
+            ctypes.c_char_p, ctypes.c_int,
+            ctypes.c_char_p, ctypes.c_int,
+            ctypes.c_char_p,
+        )
+        asound.snd_lib_error_set_handler(handler(lambda *_: None))
+    except Exception:
+        pass  # If it fails, no big deal - you'll just see the ALSA noise
+
+
+_silence_alsa_warnings()
 
 
 class SnowyEars:
