@@ -67,6 +67,10 @@ class SnowyBody:
         # active_state=False → button pulls LOW when pressed
         self.ear = Button(18, pull_up=None, active_state=False)
 
+        # Make sure all LEDs are off at startup - previous session may have
+        # left them on (e.g. the sleepy/blue eyes from the shutdown sequence)
+        self.set_eyes("off")
+
         print("Snowy's body is ready!")
 
     # -----------------------------------------------------------

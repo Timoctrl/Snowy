@@ -95,6 +95,13 @@ def main():
     body.set_eyes("happy")
     time.sleep(2)
 
+    # Step 3: Check quota before showing idle screen.
+    # This makes sure the LED is red straight away if credits are exhausted,
+    # rather than showing green and only turning red on the first question.
+    body.show_face("Checking AI", "credits...")
+    body.set_eyes("thinking")
+    brain._check_quota_once()   # sets brain.quota_ok correctly
+
     _show_idle(body, brain)
 
     print("Snowy is ready!")

@@ -66,7 +66,7 @@ class SnowyEars:
         # Calibrate for background noise (takes about 1 second)
         # This helps Snowy ignore hum, fans, etc.
         print("Calibrating microphone... (stay quiet for a moment!)")
-        with self.mic as source:
+        with _quiet(), self.mic as source:
             self.recognizer.adjust_for_ambient_noise(source, duration=1)
         print("Microphone ready! *ear twitch*")
 
