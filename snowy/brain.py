@@ -66,9 +66,9 @@ class SnowyBrain:
         self.client = genai.Client(api_key=api_key)
 
         # Which model to use, and Snowy's personality config.
-        # gemini-2.5-flash: 100 requests/day free - confirmed on this account.
-        # (2.0 models have limit:0 on this free tier; 2.5-flash-lite has limit:20)
-        self._model = "gemini-2.5-flash"
+        # gemini-2.0-flash-lite: potentially ~1500 requests/day free.
+        # If this gives limit:0 after a daily reset, switch to gemini-2.5-flash (100/day).
+        self._model = "gemini-2.0-flash-lite"
         self._config = types.GenerateContentConfig(
             system_instruction=SNOWY_PERSONALITY,
         )
