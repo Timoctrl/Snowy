@@ -18,7 +18,7 @@ HOW IT WORKS:
 BEFORE YOU RUN THIS:
     Install audio support:
         sudo apt-get install python3-pyaudio -y
-        sudo pip3 install SpeechRecognition google-generativeai python-dotenv --break-system-packages
+        sudo pip3 install SpeechRecognition google-genai python-dotenv --break-system-packages
 
     Make sure you have a .env file with your API key:
         nano .env   →  add line:  GEMINI_API_KEY=your-key-here
@@ -60,6 +60,19 @@ def check_api_key():
         raise SystemExit(1)
 
 
+def _show_idle(body, brain):
+    """
+    Show Snowy's idle screen. Eyes go red if quota is exhausted so you
+    can see at a glance whether she can answer questions or not.
+    """
+    if brain.quota_ok:
+        body.show_face("Press my ear", "then speak!")
+        body.set_eyes("curious")   # green = ready
+    else:
+        body.show_face("No credits!", "Try tomorrow")
+        body.set_eyes("grumpy")    # red = quota exhausted
+
+
 def main():
     """The main program - Snowy comes to life here!"""
 
@@ -82,8 +95,7 @@ def main():
     body.set_eyes("happy")
     time.sleep(2)
 
-    body.show_face("Press my ear", "then speak!")
-    body.set_eyes("curious")
+    _show_idle(body, brain)
 
     print("Snowy is ready!")
     print("Press the ear button, then speak your question.")
@@ -111,8 +123,7 @@ def main():
                 body.show_face("Hmm? I didn't", "catch that!")
                 body.set_eyes("sleepy")
                 time.sleep(2)
-                body.show_face("Press my ear", "then speak!")
-                body.set_eyes("curious")
+                _show_idle(body, brain)
                 continue
 
             # Show what Snowy heard (so you can check it was right!)
@@ -130,10 +141,13 @@ def main():
             except Exception as err:
                 print(f"Error from Gemini: {err}")
                 body.set_eyes("grumpy")
-                body.show_face("Oops! Brain", "got confused!")
+                if brain._is_quota_error(err):
+                    brain.quota_ok = False
+                    body.show_face("No credits!", "Try tomorrow")
+                else:
+                    body.show_face("Oops! Brain", "got confused!")
                 time.sleep(2)
-                body.show_face("Press my ear", "then speak!")
-                body.set_eyes("curious")
+                # idle state will be set at bottom of loop
                 continue
 
             # --- ANSWER ---
@@ -142,8 +156,7 @@ def main():
             body.scroll_text(answer, pause=2.5)
 
             # --- READY AGAIN ---
-            body.show_face("Press my ear", "then speak!")
-            body.set_eyes("curious")
+            _show_idle(body, brain)
 
     except KeyboardInterrupt:
         # Ctrl+C was pressed - time to sleep!
