@@ -39,7 +39,7 @@ class SnowyEars:
 
         # Wait this many seconds of silence before deciding you've finished
         # speaking. Default is 0.8s which cuts off too early mid-sentence.
-        self.recognizer.pause_threshold = 1.5
+        self.recognizer.pause_threshold = 2.5
 
         # Calibrate for background noise (takes about 1 second)
         # This helps Snowy ignore hum, fans, etc.
