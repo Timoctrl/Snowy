@@ -37,6 +37,10 @@ class SnowyEars:
         # If your USB mic isn't picked up, see the note at the bottom
         self.mic = sr.Microphone()
 
+        # Wait this many seconds of silence before deciding you've finished
+        # speaking. Default is 0.8s which cuts off too early mid-sentence.
+        self.recognizer.pause_threshold = 1.5
+
         # Calibrate for background noise (takes about 1 second)
         # This helps Snowy ignore hum, fans, etc.
         print("Calibrating microphone... (stay quiet for a moment!)")
