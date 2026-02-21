@@ -3,3 +3,6 @@ RPLCD               # Controls the LCD screen
 google-generativeai # Gemini AI - Snowy's brain!
 python-dotenv       # Loads the API key from .env file
 RPi.GPIO            # Low-level GPIO backup (gpiozero uses this)
+SpeechRecognition   # Converts spoken words to text (Snowy's ears!)
+# Note: pyaudio must be installed via apt, not pip:
+#   sudo apt-get install python3-pyaudio -y
