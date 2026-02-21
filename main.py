@@ -100,9 +100,12 @@ def main():
     # rather than showing green and only turning red on the first question.
     body.show_face("Checking AI", "credits...")
     body.set_eyes("thinking")
-    brain._check_quota_once()   # sets brain.quota_ok correctly
+    time.sleep(1)              # keep message visible while check runs
+    brain._check_quota_once()  # sets brain.quota_ok correctly
+    print(f"Startup quota check: {'OK' if brain.quota_ok else 'EXHAUSTED'}")
 
     _show_idle(body, brain)
+    time.sleep(1)              # let the result (green/red) register visually
 
     print("Snowy is ready!")
     print("Press the ear button, then speak your question.")
@@ -115,9 +118,16 @@ def main():
             # --- WAIT FOR BUTTON ---
             print("Waiting for button press...")
             body.wait_for_button()
-            print("Button pressed! Listening...")
+            print("Button pressed!")
+
+            # Short-circuit immediately if we already know quota is out -
+            # no point listening if we can't answer anyway.
+            if not brain.quota_ok:
+                _show_idle(body, brain)
+                continue
 
             # --- LISTEN ---
+            print("Listening...")
             body.show_face("Listening...", "Speak now! :)")
             body.set_eyes("curious")
 
@@ -154,7 +164,7 @@ def main():
                 else:
                     body.show_face("Oops! Brain", "got confused!")
                 time.sleep(2)
-                # idle state will be set at bottom of loop
+                _show_idle(body, brain)
                 continue
 
             # --- ANSWER ---
