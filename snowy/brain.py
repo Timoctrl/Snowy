@@ -65,9 +65,9 @@ class SnowyBrain:
         genai.configure(api_key=api_key)
 
         # Create the Gemini model with Snowy's personality baked in
-        # gemini-1.5-flash is fast, smart, and FREE!
+        # gemini-2.0-flash is fast, smart, and FREE!
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-2.0-flash",
             system_instruction=SNOWY_PERSONALITY,
         )
 
