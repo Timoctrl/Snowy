@@ -113,12 +113,6 @@ def main():
             body.wait_for_button()
             print("Button pressed!")
 
-            # Short-circuit immediately if we already know quota is out -
-            # no point listening if we can't answer anyway.
-            if not brain.quota_ok:
-                _show_idle(body, brain)
-                continue
-
             # --- LISTEN ---
             print("Listening...")
             body.show_face("Listening...", "Speak now! :)")
