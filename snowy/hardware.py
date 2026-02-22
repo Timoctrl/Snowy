@@ -63,9 +63,15 @@ class SnowyBody:
         self.green = LED(22)   # Green eye (GPIO 22, Pin 15)
 
         # Set up the ear button
-        # pull_up=None  → we use an EXTERNAL pull resistor (the 10k one)
-        # active_state=False → button pulls LOW when pressed
-        self.ear = Button(18, pull_up=None, active_state=False)
+        # pull_up=True → use the Pi's built-in pull-up resistor
+        # This keeps GPIO 18 HIGH when not pressed, and the button
+        # connects it to GND when pressed (active LOW = standard wiring).
+        # Works with or without the external 10k resistor.
+        self.ear = Button(18, pull_up=True)
+
+        # Make sure all LEDs are off at startup - previous session may have
+        # left them on (e.g. the sleepy/blue eyes from the shutdown sequence)
+        self.set_eyes("off")
 
         print("Snowy's body is ready!")
 

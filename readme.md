@@ -1,6 +1,6 @@
 # Snowy the Snow Leopard
 
-An AI-powered Lego snow leopard built with a Raspberry Pi 3B and Claude AI.
+An AI-powered Lego snow leopard built with a Raspberry Pi 3B and Google Gemini AI.
 Built by a dad and daughter as a hands-on electronics + coding project!
 
 ## What Snowy can do
@@ -26,7 +26,7 @@ Built by a dad and daughter as a hands-on electronics + coding project!
 ```
 main.py              ← Run this to start Snowy!
 snowy/
-  brain.py           ← Claude AI (Snowy's personality + memory)
+  brain.py           ← Gemini AI (Snowy's personality + memory)
   hardware.py        ← LCD, LEDs, button control
 tests/
   blink.py           ← Test a single LED
@@ -73,7 +73,7 @@ Then press Snowy's ear and type a question!
 
 ## Coming next
 
-- [ ] USB microphone → speak questions instead of typing
+- [x] USB microphone → speak questions instead of typing
 - [ ] Speaker + amp board → Snowy speaks her answers aloud
 - [ ] Servo motor → tail wagging!
 - [ ] Ultrasonic sensor → Snowy notices when you walk nearby
